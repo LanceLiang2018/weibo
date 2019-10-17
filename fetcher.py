@@ -10,7 +10,7 @@ import time
 
 surl = 'https://m.weibo.cn/api/container/getIndex?uid=2803301701&luicode=10000011&lfid=100103type%3D1%26q%3D%E4%BA%BA%E6%B0%91%E6%97%A5%E6%8A%A5&featurecode=20000320&type=uid&value=2803301701&containerid=1076032803301701&page='
 timeout = 1
-delay = 1.5
+delay = 2
 
 
 def fetch_one(page):
@@ -60,7 +60,7 @@ def test(page=1):
 
 q = queue.Queue()
 manager = pymongo.MongoClient()
-db = manager.weibo.weibo2
+db = manager.weibo.weibo3
 db.drop()
 
 
