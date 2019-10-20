@@ -18,6 +18,20 @@ def output(conclude: list):
             f.write(i['text'] + '\n\n')
 
 
+def output2(conclude: list):
+    try:
+        with open('ALL(GBK).txt', 'w', encoding='GBK') as f:
+            for i in conclude:
+                f.write(i['created_at'] + '\n')
+                f.write(i['text'] + '\n\n')
+    except UnicodeEncodeError:
+        pass
+    with open('ALL(UTF8).txt', 'w', encoding='UTF-8') as f:
+        for i in conclude:
+            f.write(i['created_at'] + '\n')
+            f.write(i['text'] + '\n\n')
+
+
 def parse_card(card: dict):
     # print(card)
     try:
@@ -46,6 +60,30 @@ def parse_card(card: dict):
         return None
 
 
+def parse_card2(card: dict):
+    # print(card)
+    try:
+        mblog = card['mblog']
+        created_at = mblog['created_at']
+        # if '-' in created_at:
+        #     created_at = (created_at.replace('-', '月')) + '日'
+        #     s = created_at.spilt('-')
+        #     if len(s) == 3
+        # print(created_at)
+        html = mblog['text']
+        soup = Soup(html, 'html.parser')
+        text = soup.get_text()
+        text = text.replace('...全文', '')
+
+        return {
+            'created_at': created_at,
+            'text': text
+        }
+
+    except KeyError:
+        return None
+
+
 def parse_page(page):
     data = db.find_one({'page': page})
     if data is None:
@@ -59,7 +97,7 @@ def parse_page(page):
     cards = js['data']['cards']
     results = []
     for card in cards:
-        res = parse_card(card)
+        res = parse_card2(card)
         if res is None:
             continue
         results.append(res)
@@ -74,8 +112,9 @@ def main():
         if results is None:
             continue
         conclude.extend(results)
-    print(conclude)
-    output(conclude)
+    # print(conclude)
+    output2(conclude)
+
 
 manager = pymongo.MongoClient()
 db = manager.weibo.weibo3
